@@ -34,6 +34,11 @@
 {% endif %}
 {% endblock %}
 {% block content %}
+
+{% for message in get_flashed_messages() %}
+    <h4 style="color:red">{{message}}</h4>
+{% endfor %}
+
 <form id="myform" action="{{url_for('update')}}" method="post">
     <input type="hidden" name="id" value="{{ cafe_id }}">
 {% for item in form %}

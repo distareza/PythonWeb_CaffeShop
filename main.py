@@ -197,10 +197,12 @@ def update():
 
                 #return redirect(url_for(f"/show/{cafe_id}"))
                 return render_template("index.html")
-            else:
-                return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."}), 404
+
+        else:
+            return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."}), 404
     except Exception as e:
-        return render_template("cafe_detail.html", form=form, cafe_id=cafe_id)
+        flash(e.args[0])
+    return render_template("cafe_detail.html", form=form, cafe_id=cafe_id)
 
 @app.route("/remove", methods=["POST"])
 @login_required
