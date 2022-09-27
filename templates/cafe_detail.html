@@ -1,0 +1,93 @@
+{% extends 'base.html'  %}
+{% block script %}
+{% if current_user.is_authenticated %}
+<script>
+    $(document).ready(function() {
+        $("#btnClose").click(function(){
+            $("#divDialog").modal("hide");
+        });
+        $(".btn-close").click(function(){
+            $("#divDialog").modal("hide");
+        });
+    });
+
+    function update() {
+        $("#divDialog .modal-title").text("Update Confirmation");
+        $("#divDialog .modal-body").text("Are You Sure to Update?");
+        $("#btnSave").click(function(){
+            $("#myform")[0].action = "{{url_for('update')}}";
+            $("#myform")[0].submit();
+        });
+        $("#divDialog").modal("show");
+    }
+
+    function remove() {
+        $("#divDialog .modal-title").text("Remove Confirmation");
+        $("#divDialog .modal-body").text("Are You Sure to Remove?");
+        $("#btnSave").click(function(){
+            $("#myform")[0].action = "{{url_for('remove')}}";
+            $("#myform")[0].submit();
+        });
+        $("#divDialog").modal("show");
+    }
+</script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<form id="myform" action="{{url_for('update')}}" method="post">
+    <input type="hidden" name="id" value="{{ cafe_id }}">
+{% for item in form %}
+        {% if item.type == "CSRFTokenField" or item.type == "HiddenField" %}
+            {{item}}
+        {% else %}
+        <div class="container px-5">
+            <div class="row gx-5" style="width:600px">
+                <div class="col p-1">{{ item.label }}</div>
+                <div class="col p-1">
+                {% if current_user.is_authenticated %}
+                  {{ item }}
+                {% else %}
+                  {{ item.data }}
+                {% endif %}
+                </div>
+                <div class="col p-1">
+                {% if item.errors %}
+                    <ul class="errors">
+                        {% for error in item.errors %}
+                            <li style="color:red">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% if current_user.is_authenticated %}
+
+    <div id="divDialog" class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Modal body text goes here.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btnClose" class="btn btn-secondary">Cancel</button>
+            <button type="button" id="btnSave" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="update()">Update</button>
+    <button type="button" class="btn btn-primary" onclick="remove()">Delete</button>
+{% endif %}
+</form>
+
+
+
+{% endblock %}

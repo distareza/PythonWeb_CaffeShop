@@ -1,0 +1,74 @@
+{% extends 'base.html'  %}
+{% block script %}
+{% if current_user.is_authenticated %}
+<script>
+    $(document).ready(function() {
+        $("#btnAdd").click(function(){
+            $("#divDialog").modal("show");
+        });
+
+        $("#btnSave").click(function(){
+            $("#myform")[0].submit();
+        });
+        $("#btnClose").click(function(){
+            $("#divDialog").modal("hide");
+        });
+        $(".btn-close").click(function(){
+            $("#divDialog").modal("hide");
+        });
+
+    });
+</script>
+{% endif %}
+{% endblock %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+    <h4 style="color:red">{{message}}</h4>
+{% endfor %}
+
+        <form id="myform" action="{{url_for('addRecord')}}" method="POST">
+            <div class="container px-5">
+                {% for item in form %}
+                {% if item.type == "CSRFTokenField" or item.type == "HiddenField" %}
+                    {{item}}
+                {% else %}
+                <div class="row gx-5" >
+                    <div class="col p-1">{{ item.label }}</div>
+                    <div class="col p-1">{{ item }}</div>
+                    <div class="col p-1">
+                    {% if item.errors %}
+                    <ul class="errors">
+                        {% for error in item.errors %}
+                            <li style="color:red">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <div id="divDialog" class="modal" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Add Cafe Confirmation</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are You Sure?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary">Cancel</button>
+                    <button type="button" id="btnSave" class="btn btn-primary">Yes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" id="btnAdd" class="btn btn-primary">Add</button>
+        </form>
+
+{% endblock %}
